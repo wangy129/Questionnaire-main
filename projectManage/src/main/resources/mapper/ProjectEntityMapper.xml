@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.aim.projectManage.dao.ProjectEntityMapper">
+  <resultMap id="BaseResultMap" type="com.aim.questionnaire.dao.entity.ProjectEntity">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="user_id" jdbcType="VARCHAR" property="userId" />
+    <result column="project_name" jdbcType="VARCHAR" property="projectName" />
+<!--    <result column="project_content" jdbcType="TEXT" property="projectContent" />-->
+    <result column="created_by" jdbcType="CHAR" property="createdBy" />
+    <result column="creation_date" jdbcType="TIMESTAMP" property="creationDate" />
+    <result column="last_updated_by" jdbcType="CHAR" property="lastUpdatedBy" />
+    <result column="last_update_date" jdbcType="TIMESTAMP" property="lastUpdateDate" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.aim.questionnaire.dao.entity.ProjectEntity">
+
+  </resultMap>
+  <sql id="Base_Column_List">
+
+  </sql>
+  <sql id="Blob_Column_List">
+
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+
+  </delete>
+  <insert id="insert" parameterType="com.aim.questionnaire.dao.entity.ProjectEntity">
+    insert into project_info
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="projectName != null">
+        project_name,
+      </if>
+      <if test="projectContent != null">
+        project_content,
+      </if>
+      <if test="createdBy != null">
+        created_by,
+      </if>
+      <if test="creationDate != null">
+        creation_date,
+      </if>
+      <if test="lastUpdatedBy != null">
+        last_updated_by,
+      </if>
+      <if test="lastUpdateDate != null">
+        last_update_date,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="projectName != null">
+        #{projectName,jdbcType=VARCHAR},
+      </if>
+      <if test="projectContent != null">
+        #{projectContent,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="createdBy != null">
+        #{createdBy,jdbcType=CHAR},
+      </if>
+      <if test="creationDate != null">
+        #{creationDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUpdatedBy != null">
+        #{lastUpdatedBy,jdbcType=CHAR},
+      </if>
+      <if test="lastUpdateDate != null">
+        #{lastUpdateDate,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <insert id="insertSelective" parameterType="com.aim.questionnaire.dao.entity.ProjectEntity">
+
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.aim.questionnaire.dao.entity.ProjectEntity">
+    UPDATE project_info
+    SET project_name = #{projectName,jdbcType=VARCHAR},
+        project_content = #{projectContent,jdbcType=LONGVARCHAR},
+        last_updated_by = #{lastUpdatedBy,jdbcType=CHAR},
+        last_update_date = #{lastUpdateDate,jdbcType=TIMESTAMP}
+    WHERE id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.aim.questionnaire.dao.entity.ProjectEntity">
+    UPDATE project_info
+    SET project_name = #{projectName,jdbcType=VARCHAR},
+        project_content = #{projectContent,jdbcType=LONGVARCHAR},
+        last_updated_by = #{lastUpdatedBy,jdbcType=CHAR},
+        last_update_date = #{lastUpdateDate,jdbcType=TIMESTAMP}
+    WHERE id = #{id,jdbcType=VARCHAR}
+  </update>
+
+  <!--根据项目id删除项目-->
+  <delete id="deleteProjectById" parameterType="java.lang.String">
+    DELETE FROM project_info
+    WHERE id = #{id}
+  </delete>
+
+  <!--查询项目列表-->
+  <select id="queryProjectList" parameterType="com.aim.questionnaire.dao.entity.ProjectEntity" resultType="map">
+--     select id, user_id as userId, project_name as projectName, project_content as projectContent, created_by as createdBy,creation_date as creationDate, last_updated_by as lastUpdatedBy,last_update_date as lastUpdateDate
+--     from project_info
+    <choose>
+      <when test="createdBy != null and createdBy != ''">
+        SELECT id,project_name as projectName,project_content as projectContent
+        FROM project_info
+        WHERE created_by = #{createdBy,jdbcType=CHAR}
+        <if test="projectName != null and projectName != ''">
+          and project_name like concat("%",#{projectName},"%")
+        </if>
+      </when>
+      <when test="id != null and id!= ''">
+        select id,project_name as projectName,project_content as projectContent,creation_date as createDate,created_by as createdBy
+        from project_info
+        where id = #{id}
+      </when>
+      <otherwise>
+
+      </otherwise>
+    </choose>
+
+  </select>
+
+  <!--查询全部项目的名字接口-->
+  <select id="queryAllProjectName" resultType="map">
+    select  project_name as projectName
+    from project_info
+  </select>
+
+  <!--根据项目id查询项目名称-->
+  <select id="queryProjectNameById" parameterType="java.lang.String" resultType="java.lang.String">
+    select  project_name as projectName
+    from project_info
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+
+  <!--判断项目名是否存在-->
+  <select id="queryExistUser" parameterType="com.aim.questionnaire.dao.entity.ProjectEntity" resultType="java.lang.Integer">
+    SELECT count(1)
+    FROM project_info
+    where project_name = #{projectName,jdbcType=VARCHAR}
+    <if test="id != null">
+      and id != #{id,jdbcType=VARCHAR}
+    </if>
+  </select>
+</mapper>

@@ -1,0 +1,18 @@
+# nacos配置
+spring:
+  application:
+    name: projectManage-service
+  cloud:
+    #    服务注册到指定网卡的ip（装了虚拟机的话可以设置一下）
+    #    inetutils:
+    #      preferred-networks: 192.168.0
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+        namespace: public
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
